@@ -75,12 +75,17 @@ const buy = (id) => {
     }
     applyPromotionsCart();
     totalPrice.innerHTML = calculateTotal();
+
+    saveCart(cart);
+    printCart();
 }
 
 // Exercise 2
 const cleanCart = () =>  {
     cart.splice(0, cart.length);
     saveCart(cart);
+    totalPrice.innerHTML = 0;
+    printCart();
 }
 
 // Exercise 3
@@ -107,6 +112,31 @@ const applyPromotionsCart = () =>  {
 
 // Exercise 5
 const printCart = () => {	
+    const table = document.getElementById("cart_list");
+    table.innerHTML = "";
+
+    cart.forEach(element => {
+        const tr = document.createElement("tr");
+
+        const name = document.createElement("th");
+        name.innerHTML = element.name;
+
+        const price = document.createElement("td");
+        price.innerText = `$${element.price}`;      
+
+        const quantity = document.createElement("td");  
+        quantity.innerText = element.quantity;
+
+        const subtotal = document.createElement("td");      
+        subtotal.innerText = `$${element.subtotalWithDiscount}`;
+
+        tr.appendChild(name);
+        tr.appendChild(price);
+        tr.appendChild(quantity);
+        tr.appendChild(subtotal);
+        table.appendChild(tr);        
+    });
+
 }
 
 // Exercise 7
@@ -135,5 +165,9 @@ document.querySelectorAll("button.add-to-cart").forEach(button => {
 
 document.getElementById("clean-cart").addEventListener("click", () => {
     cleanCart()
+});
+
+document.querySelector("button.cart-button").addEventListener("click", () => {
+    printCart();
 });
 
