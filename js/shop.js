@@ -83,6 +83,11 @@ const cleanCart = () =>  {
 
 // Exercise 3
 const calculateTotal = () =>  {
+    let total = 0;
+    cart.forEach(element => {
+        total += element.subtotalWithDiscount;
+    });
+    return total;
 }
 
 // Exercise 4
@@ -105,7 +110,11 @@ const open_modal = () =>  {
 let cart = JSON.parse(localStorage.getItem("cartt")) || [];
 let total = JSON.parse(localStorage.getItem("totalt")) || 0;
 
+let totalPrice = document.getElementById("total_price");
+totalPrice.innerHTML = calculateTotal();
+
 const saveCart = (cart) => localStorage.setItem("cartt", JSON.stringify(cart));
+const saveTotal = (total) => localStorage.setItem("totalt", JSON.stringify(total));
 
 document.querySelectorAll("button.add-to-cart").forEach(button => {
     button.addEventListener("click", () => {
