@@ -73,6 +73,8 @@ const buy = (id) => {
     } else {
         cartItem.quantity += 1;
     }
+    applyPromotionsCart();
+    totalPrice.innerHTML = calculateTotal();
 }
 
 // Exercise 2
@@ -92,6 +94,15 @@ const calculateTotal = () =>  {
 
 // Exercise 4
 const applyPromotionsCart = () =>  {
+    cart.forEach(element => {
+        let subtotal = element.price * element.quantity;
+        if (element.offer && element.offer.number <= element.quantity) {
+            const discount = subtotal * element.offer.percent / 100;
+            element.subtotalWithDiscount = subtotal - discount;
+        } else {
+            element.subtotalWithDiscount = subtotal;
+        }
+    })
 }
 
 // Exercise 5
