@@ -77,6 +77,8 @@ const buy = (id) => {
 
 // Exercise 2
 const cleanCart = () =>  {
+    cart.splice(0, cart.length);
+    saveCart(cart);
 }
 
 // Exercise 3
@@ -101,6 +103,7 @@ const open_modal = () =>  {
 
 
 let cart = JSON.parse(localStorage.getItem("cartt")) || [];
+let total = JSON.parse(localStorage.getItem("totalt")) || 0;
 
 const saveCart = (cart) => localStorage.setItem("cartt", JSON.stringify(cart));
 
@@ -109,3 +112,8 @@ document.querySelectorAll("button.add-to-cart").forEach(button => {
         buy(button.dataset.productId);
     })
 });
+
+document.getElementById("clean-cart").addEventListener("click", () => {
+    cleanCart()
+});
+
