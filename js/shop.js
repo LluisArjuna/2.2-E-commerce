@@ -65,7 +65,7 @@ const products = [
 ]
 
 // Exercise 1
-const buy = (id) => { 
+const buy = (id) => {
     const cartItem = cart.find(product => product.id == id);
     if (cartItem == null) {
         const product = products.find(product => product.id == id);
@@ -76,7 +76,11 @@ const buy = (id) => {
     applyPromotionsCart();
     totalPrice.innerHTML = calculateTotal();
 
+    total +=1;
+    let nProducts = document.getElementById("count_product");
+    nProducts.innerHTML = total;
     saveCart(cart);
+    saveTotal(total);
     printCart();
 }
 
@@ -84,6 +88,8 @@ const buy = (id) => {
 const cleanCart = () =>  {
     cart.splice(0, cart.length);
     saveCart(cart);
+    total = 0;
+    saveTotal(total);
     totalPrice.innerHTML = 0;
     printCart();
 }
@@ -111,9 +117,10 @@ const applyPromotionsCart = () =>  {
 }
 
 // Exercise 5
-const printCart = () => {	
+const printCart = () => {
     const table = document.getElementById("cart_list");
     table.innerHTML = "";
+    nProducts.innerHTML = total;
 
     cart.forEach(element => {
         const tr = document.createElement("tr");
@@ -130,17 +137,45 @@ const printCart = () => {
         const subtotal = document.createElement("td");      
         subtotal.innerText = `$${element.subtotalWithDiscount}`;
 
+        const deleteButton = document.createElement("button");
+        deleteButton.innerText = "-";
+        deleteButton.addEventListener("click", () => removeFromCart(element.id));
+
+        const addButton = document.createElement("button");
+        addButton.innerText = "+";
+        addButton.addEventListener("click", () => buy(element.id));
+
         tr.appendChild(name);
+        tr.appendChild(deleteButton);
         tr.appendChild(price);
+        tr.appendChild(addButton);
         tr.appendChild(quantity);
         tr.appendChild(subtotal);
         table.appendChild(tr);        
-    });
-
+    });    
 }
 
 // Exercise 7
 const removeFromCart = (id) => {
+    const cartItem = cart.find(product => product.id == id)
+    if (cartItem.quantity > 1) {
+        cartItem.quantity -=1;
+    } else {
+        const index = cart.findIndex((product) => product.id == id);
+        cart.splice(index, 1);
+    }  
+
+    applyPromotionsCart();
+    totalPrice.innerHTML = calculateTotal();
+
+    total -=1;
+    let nProducts = document.getElementById("count_product");
+    nProducts.innerHTML = total;
+
+
+    saveCart(cart)
+    saveTotal(total)
+    printCart()
 }
 
 const open_modal = () =>  {
@@ -153,6 +188,9 @@ let total = JSON.parse(localStorage.getItem("totalt")) || 0;
 
 let totalPrice = document.getElementById("total_price");
 totalPrice.innerHTML = calculateTotal();
+
+let nProducts = document.getElementById("count_product");
+nProducts.innerHTML = total;
 
 const saveCart = (cart) => localStorage.setItem("cartt", JSON.stringify(cart));
 const saveTotal = (total) => localStorage.setItem("totalt", JSON.stringify(total));
