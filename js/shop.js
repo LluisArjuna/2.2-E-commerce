@@ -1,109 +1,16 @@
-// If you have time, you can move this variable "products" to a json or js file and load the data in this js. It will look more professional
-const products = [
-    {
-        id: 1,
-        name: 'cooking oil',
-        price: 10.5,
-        type: 'grocery',
-        offer: {
-            number: 3,
-            percent: 20
-        }
-    },
-    {
-        id: 2,
-        name: 'Pasta',
-        price: 6.25,
-        type: 'grocery'
-    },
-    {
-        id: 3,
-        name: 'Instant cupcake mixture',
-        price: 5,
-        type: 'grocery',
-        offer: {
-            number: 10,
-            percent: 30
-        }
-    },
-    {
-        id: 4,
-        name: 'All-in-one',
-        price: 260,
-        type: 'beauty'
-    },
-    {
-        id: 5,
-        name: 'Zero Make-up Kit',
-        price: 20.5,
-        type: 'beauty'
-    },
-    {
-        id: 6,
-        name: 'Lip Tints',
-        price: 12.75,
-        type: 'beauty'
-    },
-    {
-        id: 7,
-        name: 'Lawn Dress',
-        price: 15,
-        type: 'clothes'
-    },
-    {
-        id: 8,
-        name: 'Lawn-Chiffon Combo',
-        price: 19.99,
-        type: 'clothes'
-    },
-    {
-        id: 9,
-        name: 'Toddler Frock',
-        price: 9.99,
-        type: 'clothes'
-    }
-]
+import { products } from "../js/products.js";
 
-// Exercise 1
-const buy = (id) => {
-    const cartItem = cart.find(product => product.id == id);
-    if (cartItem == null) {
-        const product = products.find(product => product.id == id);
-        cart.push({...product, quantity: 1});
-    } else {
-        cartItem.quantity += 1;
-    }
-    applyPromotionsCart();
-    totalPrice.innerHTML = calculateTotal();
 
-    total +=1;
-    let nProducts = document.getElementById("count_product");
-    nProducts.innerHTML = total;
-    saveCart(cart);
-    saveTotal(total);
-    printCart();
-}
+let cart = JSON.parse(localStorage.getItem("cartt")) || [];
+const saveCart = (cart) => localStorage.setItem("cartt", JSON.stringify(cart));
 
-// Exercise 2
-const cleanCart = () =>  {
-    cart.splice(0, cart.length);
-    saveCart(cart);
-    total = 0;
-    saveTotal(total);
-    totalPrice.innerHTML = 0;
-    printCart();
-}
 
-// Exercise 3
-const calculateTotal = () =>  {
-    let total = 0;
-    cart.forEach(element => {
-        total += element.subtotalWithDiscount;
-    });
-    return total;
-}
+const getProductById = (id) =>
+  products.find(p => p.id == id);
 
-// Exercise 4
+const getCartItemById = (id) =>
+  cart.find(p => p.id == id);
+
 const applyPromotionsCart = () =>  {
     cart.forEach(element => {
         let subtotal = element.price * element.quantity;
@@ -116,11 +23,26 @@ const applyPromotionsCart = () =>  {
     })
 }
 
-// Exercise 5
+const calculateTotal = () =>  {
+    let total = 0;
+    cart.forEach(element => {
+        total += element.subtotalWithDiscount;
+    });
+    return total;
+}
+
+const calculateNProducts = () =>  {
+    let total = 0;
+    cart.forEach(element => {
+        total += element.quantity;
+    });
+    return total;
+}
+
+
 const printCart = () => {
     const table = document.getElementById("cart_list");
     table.innerHTML = "";
-    nProducts.innerHTML = total;
 
     cart.forEach(element => {
         const tr = document.createElement("tr");
@@ -155,9 +77,32 @@ const printCart = () => {
     });    
 }
 
-// Exercise 7
+
+const buy = (id) => {
+    const cartItem = getCartItemById(id);
+    if (cartItem == null) {
+        const product = getProductById(id);
+        cart.push({...product, quantity: 1});
+    } else {
+        cartItem.quantity += 1;
+    }
+    applyPromotionsCart();
+    saveCart(cart);
+    totalPrice.innerHTML = calculateTotal();
+    nProducts.innerHTML = calculateNProducts();
+    printCart();
+}
+
+const cleanCart = () =>  {
+    cart.splice(0, cart.length);
+    saveCart(cart);
+    totalPrice.innerHTML = 0;
+    nProducts.innerHTML = 0;
+    printCart();
+}
+
 const removeFromCart = (id) => {
-    const cartItem = cart.find(product => product.id == id)
+    const cartItem = getCartItemById(id);
     if (cartItem.quantity > 1) {
         cartItem.quantity -=1;
     } else {
@@ -166,34 +111,18 @@ const removeFromCart = (id) => {
     }  
 
     applyPromotionsCart();
-    totalPrice.innerHTML = calculateTotal();
-
-    total -=1;
-    let nProducts = document.getElementById("count_product");
-    nProducts.innerHTML = total;
-
-
     saveCart(cart)
-    saveTotal(total)
+    totalPrice.innerHTML = calculateTotal();
+    nProducts.innerHTML = calculateNProducts();
     printCart()
 }
 
-const open_modal = () =>  {
-    printCart();
-}
-
-
-let cart = JSON.parse(localStorage.getItem("cartt")) || [];
-let total = JSON.parse(localStorage.getItem("totalt")) || 0;
 
 let totalPrice = document.getElementById("total_price");
 totalPrice.innerHTML = calculateTotal();
 
 let nProducts = document.getElementById("count_product");
-nProducts.innerHTML = total;
-
-const saveCart = (cart) => localStorage.setItem("cartt", JSON.stringify(cart));
-const saveTotal = (total) => localStorage.setItem("totalt", JSON.stringify(total));
+nProducts.innerHTML = calculateNProducts();
 
 document.querySelectorAll("button.add-to-cart").forEach(button => {
     button.addEventListener("click", () => {
@@ -202,10 +131,9 @@ document.querySelectorAll("button.add-to-cart").forEach(button => {
 });
 
 document.getElementById("clean-cart").addEventListener("click", () => {
-    cleanCart()
+    cleanCart();
 });
 
 document.querySelector("button.cart-button").addEventListener("click", () => {
     printCart();
 });
-
