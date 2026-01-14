@@ -117,6 +117,7 @@ const removeFromCart = (id) => {
     printCart()
 }
 
+document.getElementById("checkout").classList.toggle("disabled", cart.length === 0);
 
 let totalPrice = document.getElementById("total_price");
 totalPrice.innerHTML = calculateTotal();
